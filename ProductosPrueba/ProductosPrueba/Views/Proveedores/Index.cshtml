@@ -1,0 +1,132 @@
+﻿@model IEnumerable<ProductosPrueba.Modelos.Proveedores>
+
+<div class="mail-box">
+    <h2>Proveedores</h2>
+    <p>
+        <a asp-action="Create" class="btn btn-primary info-dialog-window">Nuevo Registro</a>
+    </p>
+    <div class="table-responsive table-sm table-hover">
+        <table id="example" class="table table-hover table-mail">
+            <thead class="table-active">
+                @*crear la fila con los criterios:*@
+                <tr>
+                    <th>
+                        Ruc
+                    </th>
+                    <th>
+                        Razon Social
+                    </th>
+                    <th>
+                        Telefono
+                    </th>
+                    <th>
+                        Direccion
+                    </th>
+                    <th>
+                        Estado
+                    </th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Ruc)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.NombreProveedor)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Telefono)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Direccion)
+                        </td>
+                        <td>
+                            @* @Html.DisplayFor(modelItem => item.Estado)*@
+                            <span class="estado-badge @(item.Estado ? "badge-success" : "badge-danger")">
+                                @(item.Estado ? "Activado" : "Anulado")
+                            </span>
+                        </td>
+                        <td>
+                            @*<a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning infoObser-dialog-window">Editar</a>
+                        <a data-id="@item.Id" class="btn btn-success activar-dialog-window">Activar</a>
+                        <a data-id="@item.Id" class="btn btn-danger delete-dialog-window">Anular</a>
+                        <a asp-controller="Productos" asp-action="Index" asp-route-id="@item.Id" class="btn btn-info">Productos</a>   *@
+                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning infoObser-dialog-window">Editar</a>
+                            @if (item.Estado)
+                            {
+                                <a data-id="@item.Id" class="btn btn-danger delete-dialog-window">Anular</a>
+                            }
+                            else
+                            {
+                                <a data-id="@item.Id" class="btn btn-success activar-dialog-window">Activar</a>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        @*<a asp-controller="Categorias" asp-action="Index" asp-route-id="Id" class="btn btn-dark">Regresar a la lista</a>*@
+    </div>
+</div>
+
+<div class="modal fade" id="Activar" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header" style="background-color:#3fb618;color:white;">
+                <button data-dismiss="modal" class="close" type="button">
+                    <span aria-hidden="true">×</span>
+                    <span class="sr-only">Close</span>
+                </button>
+                <h2 class="modal-title">Activar Proveedor</h2>
+            </div>
+            <div class="modal-body">
+                <div class="text-center">
+                    <h4>¿Estás seguro de activar el proveedor seleccionado?</h4>
+                </div>
+                <div id="responseActivar" class="text-right">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="Anular" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header" style="background-color:#3fb618;color:white;">
+                <button data-dismiss="modal" class="close" type="button">
+                    <span aria-hidden="true">×</span>
+                    <span class="sr-only">Close</span>
+                </button>
+                <h2 class="modal-title">Activar Proveedor</h2>
+            </div>
+            <div class="modal-body">
+                <div class="text-center">
+                    <h4>¿Estás seguro de activar el proveedor seleccionado?</h4>
+                </div>
+                <div id="responseInactivar" class="text-right">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $("body").on("click", "a.delete-dialog-window", null, function (e) {
+            var htmlContent = '<br /><button type="button" id="btnNo" class="btn btn-danger" style="background-color:#da2213;color:white;" data-dismiss="modal" aria-hidden="true">No</button>&nbsp&nbsp<a href="@Url.Action("Anular", "Proveedores")/' + $(this).data('id') + '" class="btn btn-default">Sí</a>';
+            $("#responseInactivar").html(htmlContent);
+            $('#Anular').modal('show');
+        });
+
+        $("body").on("click", "a.activar-dialog-window", null, function (e) {
+            var htmlContent = '<br /><button type="button" id="btnNoActivar" class="btn btn-danger" style="background-color:#da2213;color:white;" data-dismiss="modal" aria-hidden="true">No</button>&nbsp&nbsp<a href="@Url.Action("Activar", "Proveedores")/' + $(this).data('id') + '" class="btn btn-success">Sí</a>';
+            $("#responseActivar").html(htmlContent);
+            $('#Activar').modal('show');
+        });
+    </script>
+}
