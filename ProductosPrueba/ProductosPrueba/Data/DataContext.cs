@@ -14,5 +14,6 @@ namespace ProductosPrueba.Data
         public DbSet<Categorias> Categorias { get; set; }
         public DbSet<Productos> Productos { get; set; }
         public DbSet<Proveedores> Proveedores { get; set; }
+        public DbSet<PR_PRODUCTOS_Q01> PR_PRODUCTOS_Q01 { get; set; }
     }
 }

@@ -24,7 +24,7 @@ namespace ProductosPrueba.Controllers
         //Create ZONAS
         public IActionResult Create()
         {
-            return View();
+            return PartialView();
         }
 
         [HttpPost]
@@ -39,7 +39,7 @@ namespace ProductosPrueba.Controllers
         public async Task<IActionResult> Edit(int id)
         {
             var zonas = await _context.Zonas.FindAsync(id); //select * from Zonas where PK = id
-            return View(zonas);
+            return PartialView(zonas);
         }
 
         [HttpPost]

@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using ProductosPrueba.Data;
 using ProductosPrueba.Modelos;
 
@@ -15,6 +14,7 @@ namespace ProductosPrueba.Controllers
         }
 
         //INDEX PROVEEDORES GET : /<Controller>/
+        [HttpGet]
         public IActionResult Index()
         {
             var proveedores = _context.Proveedores.ToList();
@@ -24,7 +24,7 @@ namespace ProductosPrueba.Controllers
         //Create PROVEEDORES
         public IActionResult Create()
         {
-            return View();
+            return PartialView();
         }
 
         [HttpPost]
@@ -39,7 +39,7 @@ namespace ProductosPrueba.Controllers
         public async Task<IActionResult> Edit(int id)
         {
             var proveedores = await _context.Proveedores.FindAsync(id);
-            return View(proveedores);
+            return PartialView(proveedores);
         }
 
         [HttpPost]
@@ -47,6 +47,9 @@ namespace ProductosPrueba.Controllers
         {
             var modelOld = await _context.Proveedores.FindAsync(model.Id); //select * from Proveedores where PK = id
             modelOld.NombreProveedor = model.NombreProveedor;
+            modelOld.Ruc = model.Ruc;
+            modelOld.Telefono = model.Telefono;
+            modelOld.Direccion = model.Direccion;
             _context.Update(modelOld); //update Proveedores set NombreProveedores = model.NombreProveedores
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));

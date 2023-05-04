@@ -28,7 +28,7 @@ namespace ProductosPrueba.Controllers
         public IActionResult Create(int idZonas) 
         {
             var categorias = new Categorias { IdZona = idZonas };
-            return View(categorias);
+            return PartialView(categorias);
         }
         [HttpPost]
         public async Task<IActionResult> Create(Categorias model)
@@ -42,7 +42,7 @@ namespace ProductosPrueba.Controllers
         public async Task<IActionResult> Edit(int id)
         {
             var categorias = await _context.Categorias.FindAsync(id);
-            return View(categorias);
+            return PartialView(categorias);
         }
 
         [HttpPost]
