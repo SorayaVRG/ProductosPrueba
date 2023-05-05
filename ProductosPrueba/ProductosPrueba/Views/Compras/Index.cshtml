@@ -1,7 +1,7 @@
-﻿@model IEnumerable<ProductosPrueba.Modelos.PR_PRODUCTOS_Q01>
+﻿@model IEnumerable<ProductosPrueba.Modelos.PR_COMPRAS_S01>
 
 <div class="mail-box">
-    <h2>Productos</h2>
+    <h2>Compras</h2>
     <p>
         <a asp-action="Create" class="btn btn-primary add-dialog-window">Nuevo Producto</a>
     </p>
@@ -20,28 +20,28 @@
                         Producto
                     </th>
                     <th>
-                        Marca
+                        Trabajador
                     </th>
                     <th>
-                        Medida
+                        Tipo Doc
                     </th>
                     <th>
-                        Precio
+                        Num Doc
                     </th>
                     <th>
-                        Stock
+                        Sexo
                     </th>
                     <th>
-                        Fecha Vencimiento
+                        Cantidad
                     </th>
                     <th>
-                        Proveedor
+                        Precio Unitario
                     </th>
                     <th>
-                        Documento
+                        Precio Final
                     </th>
                     <th>
-                        Imagen
+                        Boleta
                     </th>
                     <th>
                         Estado
@@ -65,33 +65,30 @@
                             @Html.DisplayFor(modelItem => item.NombreProducto)
                         </td>
                         <td>
-                            @Html.DisplayFor(modelItem => item.Marca)
+                            @Html.DisplayFor(modelItem => item.NombreTrabajador)
                         </td>
                         <td>
-                            @Html.DisplayFor(modelItem => item.UnidadMedida)
+                            @Html.DisplayFor(modelItem => item.TipoDocumento)
                         </td>
                         <td>
-                            @Html.DisplayFor(modelItem => item.Precio)
+                            @Html.DisplayFor(modelItem => item.NumeroDocumento)
                         </td>
                         <td>
-                            @Html.DisplayFor(modelItem => item.Stock)
+                            @Html.DisplayFor(modelItem => item.Sexo)
                         </td>
                         <td>
-                            @Html.DisplayFor(modelItem => item.FechaVencimiento)
+                            @Html.DisplayFor(modelItem => item.Cantidad)
                         </td>
                         <td>
-                            @Html.DisplayFor(modelItem => item.NombreProveedor)
+                            @Html.DisplayFor(modelItem => item.PrecioUnitario)
                         </td>
                         <td>
-                            @if (!string.IsNullOrEmpty(item.DocumentoTecnico))
+                            @Html.DisplayFor(modelItem => item.PrecioFinal)
+                        </td>
+                        <td>
+                            @if (!string.IsNullOrEmpty(item.Boleta))
                             {
-                                <a href="@item.DocumentoTecnicoURL2" target="_blank">Documento</a>
-                            }
-                        </td>
-                        <td>
-                            @if (!string.IsNullOrEmpty(item.Imagen))
-                            {
-                                <img src="@item.Imagen" class="img-listado" alt="Foto del trabajador" />
+                                <a href="@item.BoletaURL2" target="_blank">Documento</a>
                             }
                         </td>
                         <td>
@@ -193,17 +190,34 @@
 </div>
 
 
+<div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" id="TrabajadorModal" aria-hidden="true">
+    <div class="modal-dialog modal-lg" style="width:50%;">
+        <div class="modal-content">
+            <div class="modal-header" style="background-color:green;color:white;">
+                <h5 class="modal-title" id="TittleCreatemodel">Crear Registro</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="teeee">Please wait...</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 @section Scripts {
 
     <script>
         $("body").on("click", "a.delete-dialog-window", null, function (e) {
-            var htmlContent = '<br /><button type="button" id="btnNo" class="btn btn-danger" style="background-color:#da2213;color:white;" data-dismiss="modal" aria-hidden="true">No</button>&nbsp&nbsp<a href="@Url.Action("Anular", "Productos")/' + $(this).data('id') + '" class="btn btn-default">Sí</a>';
+            var htmlContent = '<br /><button type="button" id="btnNo" class="btn btn-danger" style="background-color:#da2213;color:white;" data-dismiss="modal" aria-hidden="true">No</button>&nbsp&nbsp<a href="@Url.Action("Anular", "Compras")/' + $(this).data('id') + '" class="btn btn-default">Sí</a>';
             $("#responseInactivar").html(htmlContent);
             $('#Anular').modal('show');
         });
 
         $("body").on("click", "a.activar-dialog-window", null, function (e) {
-            var htmlContent = '<br /><button type="button" id="btnNoActivar" class="btn btn-danger" style="background-color:#da2213;color:white;" data-dismiss="modal" aria-hidden="true">No</button>&nbsp&nbsp<a href="@Url.Action("Activar", "Productos")/' + $(this).data('id') + '" class="btn btn-success">Sí</a>';
+            var htmlContent = '<br /><button type="button" id="btnNoActivar" class="btn btn-danger" style="background-color:#da2213;color:white;" data-dismiss="modal" aria-hidden="true">No</button>&nbsp&nbsp<a href="@Url.Action("Activar", "Compras")/' + $(this).data('id') + '" class="btn btn-success">Sí</a>';
             $("#responseActivar").html(htmlContent);
             $('#Activar').modal('show');
         });
@@ -249,13 +263,12 @@
     <script>
         //PARA ABRIR UNA VENTANA DELETE
         $("body").on("click", "a.delete-dialog-window", null, function (e) {
-            var htmlContent = '<br /><button type="button" id="btnNo" class="btn btn-danger" style="background-color:#da2213;color:white;" data-dismiss="modal" aria-hidden="true">No</button>&nbsp&nbsp<a href="@Url.Action("Delete", "Productos")/' + $(this).data('id') + '" class="btn btn-default">Si</a>';
+            var htmlContent = '<br /><button type="button" id="btnNo" class="btn btn-danger" style="background-color:#da2213;color:white;" data-dismiss="modal" aria-hidden="true">No</button>&nbsp&nbsp<a href="@Url.Action("Delete", "Compras")/' + $(this).data('id') + '" class="btn btn-default">Si</a>';
             $("#response").html(htmlContent);
             $('#Anular').modal('show');
         });
         //Cuadro para poder eliminar registro, con boton no y si
     </script>
-
 
     <script>
         //PARA HACER EL COMBO ANIDADO
@@ -264,18 +277,27 @@
             CargarCategorias(idZona);
         }
         function CargarCategorias(idZona) {
-            fetchGet("/Productos/CargarCategorias/?id=" + idZona, function (data) {
+            fetchGet("/Compras/CargarCategorias/?id=" + idZona, function (data) {
                 llenarCombo(data, "comboCategoria", "nombreCategoria", "id", "0");
+            });
+        }
+        function onchangeCategorias() {
+            let idCategoria = $("#comboCategoria").val();
+            CargarProductos(idCategoria);
+        }
+        function CargarProductos(idCategoria) {
+            fetchGet("/Compras/CargarProductos/?id=" + idCategoria, function (data) {
+                llenarCombo(data, "comboProducto", "nombreProducto", "id", "0");
             });
         }
     </script>
 
     <script>
-        function onclickBuscarProveedor() {
+        function onclickBuscarTrabajador() {
             debugger;
             var parametro = $('#parametroBusqueda').val();
 
-            var url = '@Url.Action("BuscarProveedor", "Productos")';
+            var url = '@Url.Action("BuscarTrabajador", "Compras")';
             url += '?busqueda=' + parametro;
 
             $.ajax({
@@ -283,8 +305,8 @@
                 url: url,
                 dataType: 'html',
                 success: function (data) {
-                    $('#ProveedorModal .teeee').html(data);
-                    $('#ProveedorModal').modal('show');
+                    $('#TrabajadorModal .teeee').html(data);
+                    $('#TrabajadorModal').modal('show');
                 },
                 error: function (ex) {
                     alert('Failed to retrieve cities.' + ex);
@@ -296,20 +318,20 @@
     <script>
         function GuardarE3() {
             debugger
-            $('#ProveedorModal').modal('hide');
+            $('#TrabajadorModal').modal('hide');
             if (dato1 != null && dato2 != null) {
-                $('.nom_prove').val(dato3);
-                document.getElementById('IdProveedores').value = dato1;
-                $('#ruc_prove').val(dato2);
-
+                $('.NombreTrabajador').val(dato2);
+                document.getElementById('IdTrabajador').value = dato1;
+               // $('#nombres_trab').val(dato2);
             }
-        }</script>
+        }
+    </script>
 
     <script>
-        $(document).on('click', '#tablaBuscarProveedor3 tbody tr', function () {
+        $(document).on('click', '#tablaBuscarTrabajador3 tbody tr', function () {
             debugger;
             //Selecciona fila.
-            let TotalColumnas = $("#tablaBuscarProveedor3").find("tr");
+            let TotalColumnas = $("#tablaBuscarTrabajador3").find("tr");
             $(TotalColumnas).each(function () {
                 $(this).removeClass('active');
             });

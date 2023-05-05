@@ -8,64 +8,33 @@ using ProductosPrueba.Modelos;
 
 namespace ProductosPrueba.Controllers
 {
-    public class ProductosController : Controller
+    public class ComprasController : Controller
     {
         //conexion a la base de datos
         private readonly DataContext _context;
         private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public ProductosController(DataContext dataContext, IWebHostEnvironment webHostEnvironment)
+        public ComprasController(DataContext dataContext, IWebHostEnvironment webHostEnvironment)
         {
             _context = dataContext;
             _webHostEnvironment = webHostEnvironment;
         }
 
-        public async Task<IActionResult> BuscarProveedor(string busqueda)
+        public async Task<IActionResult> BuscarTrabajador(string busqueda)
         {
-            var proveedores = await _context.Proveedores.Where(t => t.NombreProveedor.Contains(busqueda)).ToListAsync();
+            var proveedores = await _context.Trabajadores.Where(t => t.Nombres.Contains(busqueda)).ToListAsync();
             return PartialView(proveedores);
         }
-
-        ////Index
-        //public async Task<IActionResult> Index(int id)
-        //{
-        //    var productos = await _context.Productos.Where(t => t.IdCategoria.Equals(id)).ToListAsync();
-        //    var modelCategorias = await _context.Categorias.FindAsync(id);
-        //    ViewBag.Categorias = modelCategorias;
-        //    return View(productos);
-        //}
 
         //GET : /<Controller>/
         [HttpGet]
         public IActionResult Index()
         {
-            //var productos = _context.Productos.ToList();
-            //return View(productos);
 
-            var productos = _context.PR_PRODUCTOS_Q01.FromSqlRaw("exec PR_PRODUCTOS_Q01");
-            return View(productos);
+            var compras = _context.PR_COMPRAS_S01.FromSqlRaw("exec PR_COMPRAS_S01");
+            return View(compras);
         }
 
-
-        //Create
-        //public async Task<IActionResult> Create(int idCategorias)
-        //{
-        //    var listadoZonas = await _context.Zonas.ToListAsync();
-        //    ViewData["IdZona"] = new SelectList(listadoZonas, "Id", "NombreZona");
-
-        //    var listadoCatergorias = await _context.Categorias.ToListAsync();
-        //    ViewData["IdCategoria"] = new SelectList(listadoCatergorias, "Id", "NombreCategoria");
-
-        //    var productos = new Productos { IdCategoria = idCategorias, FechaVencimiento = DateTime.Now.Date };
-        //    return View(productos);
-        //}
-        //[HttpPost]
-        //public async Task<IActionResult> Create(Productos model)
-        //{
-        //    await _context.AddAsync(model);
-        //    await _context.SaveChangesAsync();
-        //    return RedirectToAction("Index", new { id = model.IdCategoria });
-        //}
 
         //CREATE ACTUALIZADO
         [HttpGet]
@@ -74,14 +43,14 @@ namespace ProductosPrueba.Controllers
             var Zonas = await _context.Zonas.ToListAsync();
             ViewData["IdZona"] = new SelectList(Zonas, "Id", "NombreZona");
 
-            var productos = new Productos { FechaVencimiento = DateTime.Now.Date };
+            var productos = new Compras { FechaVencimiento = DateTime.Now.Date };
             return PartialView(productos);
-            
+
             /*
              ViewBag de Departamento
              ViewBag de Tipos de documento
             */
-           // return View();
+            // return View();
         }
 
         [HttpGet]
@@ -91,40 +60,25 @@ namespace ProductosPrueba.Controllers
             return Json(listado);
         }
 
-        //[HttpGet]
-        //public async Task<JsonResult> CargarProvincias(int id)
-        //{
-        //    var listado = await _context.Provincia.Where(t => t.IdDepartamento.Equals(id)).ToListAsync();
-        //    return Json(listado);
-        //}
-
-        //[HttpGet]
-        //public async Task<JsonResult> CargarDistritos(int id)
-        //{
-        //    var listado = await _context.Distrito.Where(t => t.IdProvincia.Equals(id)).ToListAsync();
-        //    return Json(listado);
-        //}
+        [HttpGet]
+        public async Task<JsonResult> CargarProductos(int id)
+        {
+            var listado = await _context.Productos.Where(t => t.IdCategoria.Equals(id)).ToListAsync();
+            return Json(listado);
+        }
 
         //CREAR NUEVO REGISTRO
         [HttpPost]
-        public async Task<IActionResult> Create(Productos model)
+        public async Task<IActionResult> Create(Compras model)
         {
             //PARA CREAR DOCUMENTO TECNICO
-            var prueba = model.DocumentoTecnicoIFormFile;
 
-            if (model.DocumentoTecnicoIFormFile != null)
+            if (model.BoletaIFormFile != null)
             {
-                model.DocumentoTecnico = await CargarDocumento(model.DocumentoTecnicoIFormFile, "DocumentoTecnico");
+                model.Boleta = await CargarDocumento(model.BoletaIFormFile, "Boleta");
             }
 
-            //PARA CREAR FOTO
-            var prueba1 = model.ImagenIFormFile;
-
-            if (model.ImagenIFormFile != null)
-            {
-                model.Imagen = await CargarDocumento0(model.ImagenIFormFile, "Imagen");
-            }
-
+            model.IdTrabajador = 2;
             _context.Add(model);
             await _context.SaveChangesAsync();
 
@@ -132,41 +86,25 @@ namespace ProductosPrueba.Controllers
         }
 
         //PARA CARGAR FICHA
-        private async Task<string> CargarDocumento(IFormFile DocumentoTecnicoIFormFile, string ruta)
+        private async Task<string> CargarDocumento(IFormFile BoletaIFormFile, string ruta)
         {
             var guid = Guid.NewGuid().ToString();
-            var fileName = guid + Path.GetExtension(DocumentoTecnicoIFormFile.FileName);
+            var fileName = guid + Path.GetExtension(BoletaIFormFile.FileName);
             //Obtengo extension del documento
             var carga1 = Path.Combine(_webHostEnvironment.WebRootPath, "images", ruta);
             /*var carga = Path.Combine(_webHostEnvironment.WebRootPath, string.Format("images\\{0}", ruta));*/
             using (var fileStream = new FileStream(Path.Combine(carga1, fileName), FileMode.Create))
             {
-                await DocumentoTecnicoIFormFile.CopyToAsync(fileStream);
+                await BoletaIFormFile.CopyToAsync(fileStream);
             }
             return string.Format("/images/{0}/{1}", ruta, fileName);
         }
-
-        //PARA CARGAR FOTO
-        private async Task<string> CargarDocumento0(IFormFile ImagenIFormFile, string ruta)
-        {
-            var guid = Guid.NewGuid().ToString();
-            var fileName = guid + Path.GetExtension(ImagenIFormFile.FileName);
-            //Obtengo extension del documento
-            var carga1 = Path.Combine(_webHostEnvironment.WebRootPath, "images", ruta);
-            /*var carga = Path.Combine(_webHostEnvironment.WebRootPath, string.Format("images\\{0}", ruta));*/
-            using (var fileStream = new FileStream(Path.Combine(carga1, fileName), FileMode.Create))
-            {
-                await ImagenIFormFile.CopyToAsync(fileStream);
-            }
-            return string.Format("/images/{0}/{1}", ruta, fileName);
-        }
-
 
         //Edit
         public async Task<IActionResult> Edit(int id)
         {
             var model = await _context.Productos.FindAsync(id);
-            
+
             var Zonas = await _context.Zonas.ToListAsync();
             ViewBag.IdZona = new SelectList(Zonas, "Id", "NombreZona", model.IdZona);
 
@@ -258,11 +196,11 @@ namespace ProductosPrueba.Controllers
     }
 }
 
-        //Para Proveedores
-        //public async Task<IActionResult> IndexProveedor(int id)
-        //{
-        //    var productos1 = await _context.Productos.Where(t => t.IdProveedor.Equals(id)).ToListAsync();
-        //    var modelProveedores = await _context.Proveedores.FindAsync(id);
-        //    ViewBag.Proveedores = modelProveedores;
-        //    return View(productos1);
-        //}
+//Para Proveedores
+//public async Task<IActionResult> IndexProveedor(int id)
+//{
+//    var productos1 = await _context.Productos.Where(t => t.IdProveedor.Equals(id)).ToListAsync();
+//    var modelProveedores = await _context.Proveedores.FindAsync(id);
+//    ViewBag.Proveedores = modelProveedores;
+//    return View(productos1);
+//}

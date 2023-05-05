@@ -13,7 +13,7 @@ namespace ProductosPrueba.Controllers
             _logger = logger;
         }
 
-        public IActionResult Index()
+        public IActionResult ProductIndex()
         {
             return View();
         }
